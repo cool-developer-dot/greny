@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useCallback } from 'react';
+import Link from 'next/link';
 
 const HomeSection: React.FC = React.memo(() => {
   const scrollToAbout = useCallback(() => {
@@ -38,14 +39,28 @@ const HomeSection: React.FC = React.memo(() => {
           Sustainable solutions for a better planet. Join us in creating eco-friendly 
           spaces that inspire positive change and environmental responsibility.
         </p>
-        <button
-          onClick={scrollToAbout}
-          className="group relative overflow-hidden rounded-full bg-green-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-green-700 hover:shadow-2xl animate-slide-up-delay-2"
-          aria-label="Learn more about our mission"
-        >
-          <span className="relative z-10">Learn More</span>
-          <span className="absolute inset-0 -z-0 bg-gradient-to-r from-green-500 to-emerald-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
-        </button>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up-delay-2">
+          <Link
+            href="/auth"
+            className="group relative overflow-hidden rounded-full bg-white px-8 py-4 text-lg font-semibold text-green-700 transition-all duration-300 hover:bg-green-50 hover:shadow-2xl"
+            aria-label="Get started with Greyn Eco"
+          >
+            <span className="relative z-10 flex items-center gap-2">
+              Get Started
+              <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                <path d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+              </svg>
+            </span>
+          </Link>
+          <button
+            onClick={scrollToAbout}
+            className="group relative overflow-hidden rounded-full bg-green-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-300 hover:bg-green-700 hover:shadow-2xl border-2 border-transparent hover:border-white"
+            aria-label="Learn more about our mission"
+          >
+            <span className="relative z-10">Learn More</span>
+            <span className="absolute inset-0 -z-0 bg-gradient-to-r from-green-500 to-emerald-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+          </button>
+        </div>
       </div>
 
       {/* Scroll Indicator */}

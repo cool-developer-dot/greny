@@ -214,50 +214,93 @@ const DashboardPage: React.FC = () => {
 
           {/* Investment List */}
           <div className="rounded-2xl bg-white p-8 shadow-lg">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">Your Investments</h2>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-green-500">Portfolio</p>
+                <h2 className="text-2xl font-bold text-gray-900">Your Investments</h2>
+              </div>
               <Link
                 href="/projects"
-                className="rounded-lg bg-green-600 px-6 py-2 text-sm font-semibold text-white transition-all hover:bg-green-700"
+                className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-2 text-sm font-semibold text-white transition-all hover:translate-y-[-2px] hover:bg-green-700"
               >
                 Browse Projects
+                <svg className="h-4 w-4" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                  <path d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
               </Link>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="pb-4 text-left text-sm font-semibold text-gray-600">Project</th>
-                    <th className="pb-4 text-left text-sm font-semibold text-gray-600">Investment</th>
-                    <th className="pb-4 text-left text-sm font-semibold text-gray-600">ROI Earned</th>
-                    <th className="pb-4 text-left text-sm font-semibold text-gray-600">Carbon Credits</th>
-                    <th className="pb-4 text-left text-sm font-semibold text-gray-600">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {investments.map((investment) => (
-                    <tr key={investment.id} className="border-b border-gray-100 transition-colors hover:bg-gray-50">
-                      <td className="py-4">
-                        <Link
-                          href={`/projects/${investment.id}`}
-                          className="font-medium text-gray-900 hover:text-green-600"
-                        >
-                          {investment.projectName}
-                        </Link>
-                      </td>
-                      <td className="py-4 text-gray-700">${investment.amount.toLocaleString()}</td>
-                      <td className="py-4 font-semibold text-green-600">${investment.roi.toLocaleString()}</td>
-                      <td className="py-4 font-semibold text-emerald-600">{investment.carbonCredits}</td>
-                      <td className="py-4">
-                        <span className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${getStatusColor(investment.status)}`}>
-                          {investment.status}
-                        </span>
-                      </td>
+            {/* Desktop Table */}
+            <div className="hidden md:block">
+              <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
+                <table className="min-w-full table-auto">
+                  <thead className="bg-gray-50">
+                    <tr className="text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
+                      <th className="px-6 py-4">Project</th>
+                      <th className="px-6 py-4">Investment</th>
+                      <th className="px-6 py-4">ROI earned</th>
+                      <th className="px-6 py-4">Carbon credits</th>
+                      <th className="px-6 py-4">Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100 bg-white text-sm text-gray-700">
+                    {investments.map((investment) => (
+                      <tr key={investment.id} className="transition-colors hover:bg-gray-50">
+                        <td className="px-6 py-4">
+                          <Link href={`/projects/${investment.id}`} className="font-semibold text-gray-900 hover:text-green-600">
+                            {investment.projectName}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4">${investment.amount.toLocaleString()}</td>
+                        <td className="px-6 py-4 font-semibold text-green-600">${investment.roi.toLocaleString()}</td>
+                        <td className="px-6 py-4 font-semibold text-emerald-600">{investment.carbonCredits}</td>
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${getStatusColor(investment.status)}`}>
+                            {investment.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="grid gap-4 md:hidden">
+              {investments.map((investment) => (
+                <div key={investment.id} className="rounded-2xl border border-gray-100 p-4 shadow-sm transition-shadow hover:shadow-md">
+                  <div className="mb-3 flex items-start justify-between gap-2">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-400">Project</p>
+                      <Link href={`/projects/${investment.id}`} className="text-base font-semibold text-gray-900">
+                        {investment.projectName}
+                      </Link>
+                    </div>
+                    <span className={`inline-flex items-center rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${getStatusColor(investment.status)}`}>
+                      {investment.status}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Investment</p>
+                      <p className="text-lg font-bold text-gray-900">${investment.amount.toLocaleString()}</p>
+                    </div>
+                    <div className="rounded-xl bg-green-50/70 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-green-600">ROI earned</p>
+                      <p className="text-lg font-bold text-green-600">${investment.roi.toLocaleString()}</p>
+                    </div>
+                    <div className="rounded-xl bg-emerald-50/70 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600">Carbon credits</p>
+                      <p className="text-lg font-bold text-emerald-600">{investment.carbonCredits}</p>
+                    </div>
+                    <div className="rounded-xl bg-gray-50 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Project ID</p>
+                      <p className="text-lg font-bold text-gray-900">#{investment.id}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
