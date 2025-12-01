@@ -9,7 +9,6 @@ interface Project {
   id: string;
   name: string;
   category: string;
-  roi: number;
   carbonImpact: string;
   image: string;
   description: string;
@@ -23,7 +22,6 @@ const ProjectsPage: React.FC = () => {
       id: '1',
       name: 'Amazon Rainforest Reforestation',
       category: 'Reforestation',
-      roi: 12.5,
       carbonImpact: '500 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80',
       description: 'Plant 10,000 native trees in the Amazon rainforest',
@@ -34,7 +32,6 @@ const ProjectsPage: React.FC = () => {
       id: '2',
       name: 'Solar Energy Farm - California',
       category: 'Solar Energy',
-      roi: 15.0,
       carbonImpact: '800 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=800&q=80',
       description: 'Build a 5MW solar farm to power 1,200 homes',
@@ -45,7 +42,6 @@ const ProjectsPage: React.FC = () => {
       id: '3',
       name: 'Wind Power Initiative - Texas',
       category: 'Wind Energy',
-      roi: 14.2,
       carbonImpact: '1,200 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=800&q=80',
       description: 'Install 10 wind turbines generating clean energy',
@@ -56,7 +52,6 @@ const ProjectsPage: React.FC = () => {
       id: '4',
       name: 'Ocean Cleanup Initiative',
       category: 'Ocean Conservation',
-      roi: 10.8,
       carbonImpact: '300 tons plastic removed',
       image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80',
       description: 'Remove plastic waste from Pacific Ocean regions',
@@ -67,7 +62,6 @@ const ProjectsPage: React.FC = () => {
       id: '5',
       name: 'Urban Green Rooftop Gardens',
       category: 'Urban Sustainability',
-      roi: 11.5,
       carbonImpact: '150 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=800&q=80',
       description: 'Convert 50 city rooftops into green gardens',
@@ -78,7 +72,6 @@ const ProjectsPage: React.FC = () => {
       id: '6',
       name: 'Electric Vehicle Charging Network',
       category: 'Clean Transportation',
-      roi: 16.5,
       carbonImpact: '650 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=800&q=80',
       description: 'Install 200 EV charging stations across major cities',
@@ -149,11 +142,7 @@ const ProjectsPage: React.FC = () => {
                     </p>
 
                     {/* Stats Grid */}
-                    <div className="mb-4 grid grid-cols-2 gap-4">
-                      <div className="rounded-lg bg-green-50 p-3">
-                        <p className="text-xs text-gray-600">Expected ROI</p>
-                        <p className="text-lg font-bold text-green-700">{project.roi}%</p>
-                      </div>
+                    <div className="mb-4">
                       <div className="rounded-lg bg-blue-50 p-3">
                         <p className="text-xs text-gray-600">Carbon Impact</p>
                         <p className="text-sm font-bold text-blue-700">{project.carbonImpact}</p>

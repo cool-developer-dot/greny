@@ -6,7 +6,6 @@ export interface Project {
   name: string;
   category: string;
   status: 'active' | 'pending' | 'completed' | 'rejected';
-  roi: number;
   carbonImpact: string;
   image: string;
   description: string;
@@ -66,7 +65,6 @@ export const mockProjects: Project[] = [
     name: 'Amazon Rainforest Reforestation',
     category: 'Reforestation',
     status: 'active',
-    roi: 12.5,
     carbonImpact: '500 tons CO₂/year',
     image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
     description: 'Plant 10,000 native trees in the Amazon rainforest',
@@ -85,7 +83,6 @@ export const mockProjects: Project[] = [
     name: 'Solar Energy Farm - California',
     category: 'Solar Energy',
     status: 'active',
-    roi: 15.0,
     carbonImpact: '800 tons CO₂/year',
     image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80',
     description: 'Build a 5MW solar farm to power 1,200 homes',
@@ -104,7 +101,6 @@ export const mockProjects: Project[] = [
     name: 'Wind Power Initiative - Texas',
     category: 'Wind Energy',
     status: 'active',
-    roi: 14.2,
     carbonImpact: '1,200 tons CO₂/year',
     image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=1200&q=80',
     description: 'Install 10 wind turbines generating clean energy',
@@ -123,7 +119,6 @@ export const mockProjects: Project[] = [
     name: 'Ocean Cleanup Initiative',
     category: 'Ocean Conservation',
     status: 'pending',
-    roi: 10.8,
     carbonImpact: '300 tons plastic removed',
     image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80',
     description: 'Remove plastic waste from Pacific Ocean regions',
@@ -142,7 +137,6 @@ export const mockProjects: Project[] = [
     name: 'Urban Green Rooftop Gardens',
     category: 'Urban Sustainability',
     status: 'active',
-    roi: 11.5,
     carbonImpact: '150 tons CO₂/year',
     image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&q=80',
     description: 'Convert 50 city rooftops into green gardens',
@@ -161,7 +155,6 @@ export const mockProjects: Project[] = [
     name: 'Electric Vehicle Charging Network',
     category: 'Clean Transportation',
     status: 'pending',
-    roi: 16.5,
     carbonImpact: '650 tons CO₂/year',
     image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1200&q=80',
     description: 'Install 200 EV charging stations across major cities',
@@ -314,7 +307,7 @@ export const mockTransactions: Transaction[] = [
     userId: '1',
     type: 'return',
     amount: 125,
-    description: 'ROI from Amazon Reforestation',
+    description: 'Return from Amazon Reforestation',
     date: '2025-01-10',
     status: 'completed'
   },

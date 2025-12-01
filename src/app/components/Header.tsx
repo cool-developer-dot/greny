@@ -3,23 +3,18 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext';
 
 const Header: React.FC = () => {
   const router = useRouter();
+  const { isAuthenticated, isENGO, isSimpleUser, user } = useAuth();
   const [showAdminMenu, setShowAdminMenu] = useState(false);
+  const [showENGOMenu, setShowENGOMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // ============================================================
-  // AUTHENTICATION CONTROLS (For Demo - Replace with real auth)
-  // ============================================================
-  // Set isAuthenticated = false to show Login/Get Started buttons
-  // Set isAuthenticated = true to show User Menu (logged in state)
-  const isAuthenticated = true; // TODO: Replace with actual auth check
-  
-  // User role (only matters when authenticated)
-  const userRole = 'admin'; // Change to 'investor' to see investor view
-  const isAdmin = userRole === 'admin';
+  // Legacy admin check (keeping for existing admin pages)
+  const isAdmin = false; // Can be enabled if needed
 
   const primaryNavLinks = [
     { label: 'Home', href: '/' },
@@ -37,10 +32,18 @@ const Header: React.FC = () => {
     { label: 'Platform Analytics', href: '/admin/analytics', icon: '📈' }
   ];
 
+  const engoMenuLinks = [
+    { label: 'ENGO Dashboard', href: '/engo/dashboard', icon: '🌱' },
+    { label: 'ENGO Details', href: '/engo/details', icon: '📋' },
+    { label: 'Person Details', href: '/engo/person-details', icon: '👤' },
+    { label: 'Launch Project', href: '/engo/launch', icon: '🚀' }
+  ];
+
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
     setShowAdminMenu(false);
+    setShowENGOMenu(false);
     setShowUserMenu(false);
   };
 
@@ -93,7 +96,38 @@ const Header: React.FC = () => {
               </li>
             ))}
             
-            {/* Admin Dropdown */}
+            {/* ENGO Dropdown - Only visible for ENGO users */}
+            {isENGO && (
+              <li className="relative">
+                <button
+                  onClick={() => setShowENGOMenu(!showENGOMenu)}
+                  className="relative flex items-center gap-1 text-base font-medium text-white transition-colors hover:text-green-200 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-green-300 after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  ENGO
+                  <svg className={`h-4 w-4 transition-transform ${showENGOMenu ? 'rotate-180' : ''}`} fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+                
+                {showENGOMenu && (
+                  <div className="absolute top-full right-0 mt-2 w-56 rounded-lg bg-white shadow-xl py-2">
+                    {engoMenuLinks.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-green-50"
+                        onClick={() => setShowENGOMenu(false)}
+                      >
+                        <span className="text-xl">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </li>
+            )}
+
+            {/* Admin Dropdown - Legacy support */}
             {isAdmin && (
               <li className="relative">
                 <button
@@ -164,7 +198,7 @@ const Header: React.FC = () => {
               className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20"
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-bold text-[#1a4d2e]">
-                JD
+                {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
               </div>
               <svg className={`h-4 w-4 transition-transform ${showUserMenu ? 'rotate-180' : ''}`} fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
                 <path d="M19 9l-7 7-7-7"></path>
@@ -278,6 +312,44 @@ const Header: React.FC = () => {
               ))}
             </div>
 
+            {/* ENGO Menu - Only visible for ENGO users */}
+            {isENGO && (
+              <div className="space-y-4 border-t border-gray-100 pt-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-400">
+                  ENGO
+                </p>
+                <div className="grid gap-3">
+                  {engoMenuLinks.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center justify-between rounded-2xl border border-gray-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/40"
+                      onClick={closeMobileMenu}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-100 to-green-50 text-lg">
+                          {item.icon}
+                        </span>
+                        {item.label}
+                      </span>
+                      <svg
+                        className="h-4 w-4 text-emerald-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Admin Menu - Legacy support */}
             {isAdmin && (
               <div className="space-y-4 border-t border-gray-100 pt-5">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-400">

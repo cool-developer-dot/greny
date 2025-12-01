@@ -10,7 +10,6 @@ interface ProjectDetails {
   id: string;
   name: string;
   category: string;
-  roi: number;
   carbonImpact: string;
   image: string;
   description: string;
@@ -33,7 +32,6 @@ const ProjectDetailPage: React.FC = () => {
       id: '1',
       name: 'Amazon Rainforest Reforestation',
       category: 'Reforestation',
-      roi: 12.5,
       carbonImpact: '500 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&q=80',
       description: 'Plant 10,000 native trees in the Amazon rainforest',
@@ -49,7 +47,6 @@ const ProjectDetailPage: React.FC = () => {
       id: '2',
       name: 'Solar Energy Farm - California',
       category: 'Solar Energy',
-      roi: 15.0,
       carbonImpact: '800 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80',
       description: 'Build a 5MW solar farm to power 1,200 homes',
@@ -65,7 +62,6 @@ const ProjectDetailPage: React.FC = () => {
       id: '3',
       name: 'Wind Power Initiative - Texas',
       category: 'Wind Energy',
-      roi: 14.2,
       carbonImpact: '1,200 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=1200&q=80',
       description: 'Install 10 wind turbines generating clean energy',
@@ -81,7 +77,6 @@ const ProjectDetailPage: React.FC = () => {
       id: '4',
       name: 'Ocean Cleanup Initiative',
       category: 'Ocean Conservation',
-      roi: 10.8,
       carbonImpact: '300 tons plastic removed',
       image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&q=80',
       description: 'Remove plastic waste from Pacific Ocean regions',
@@ -97,7 +92,6 @@ const ProjectDetailPage: React.FC = () => {
       id: '5',
       name: 'Urban Green Rooftop Gardens',
       category: 'Urban Sustainability',
-      roi: 11.5,
       carbonImpact: '150 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&q=80',
       description: 'Convert 50 city rooftops into green gardens',
@@ -113,7 +107,6 @@ const ProjectDetailPage: React.FC = () => {
       id: '6',
       name: 'Electric Vehicle Charging Network',
       category: 'Clean Transportation',
-      roi: 16.5,
       carbonImpact: '650 tons CO₂/year',
       image: 'https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=1200&q=80',
       description: 'Install 200 EV charging stations across major cities',
@@ -136,7 +129,6 @@ const ProjectDetailPage: React.FC = () => {
   }, [investmentAmount]);
 
   const calculatedCarbonCredits = (parseFloat(investmentAmount) / 100) * project.carbonCreditsPerHundred;
-  const estimatedReturn = (parseFloat(investmentAmount) * project.roi) / 100;
 
   return (
     <div className="min-h-screen bg-white">
@@ -173,11 +165,7 @@ const ProjectDetailPage: React.FC = () => {
               </p>
 
               {/* Key Metrics */}
-              <div className="mb-8 grid grid-cols-2 gap-6 md:grid-cols-4">
-                <div className="rounded-lg bg-green-50 p-4">
-                  <p className="text-sm text-gray-600">Expected ROI</p>
-                  <p className="text-2xl font-bold text-green-700">{project.roi}%</p>
-                </div>
+              <div className="mb-8 grid grid-cols-2 gap-6 md:grid-cols-3">
                 <div className="rounded-lg bg-blue-50 p-4">
                   <p className="text-sm text-gray-600">Duration</p>
                   <p className="text-2xl font-bold text-blue-700">{project.duration}</p>
@@ -265,10 +253,6 @@ const ProjectDetailPage: React.FC = () => {
 
                 {/* Investment Calculations */}
                 <div className="mb-6 space-y-3 rounded-lg bg-green-50 p-4">
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">Estimated Return</span>
-                    <span className="font-bold text-green-700">${estimatedReturn.toFixed(2)}</span>
-                  </div>
                   <div className="flex justify-between">
                     <span className="text-sm text-gray-600">Carbon Credits</span>
                     <span className="font-bold text-green-700">{calculatedCarbonCredits.toFixed(2)}</span>
