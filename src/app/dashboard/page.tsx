@@ -557,10 +557,10 @@ const DashboardPage: React.FC = () => {
                       </svg>
                     </Link>
                     <Link
-                      href="/wallet"
+                      href="/activities"
                       className="flex w-full items-center justify-center gap-2 rounded-lg border-2 border-gray-300 px-4 py-3 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50"
                     >
-                      Manage Wallet
+                      Activity Bar
                     </Link>
                   </div>
                 </div>
