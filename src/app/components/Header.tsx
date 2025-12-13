@@ -16,14 +16,22 @@ const Header: React.FC = () => {
   // Legacy admin check (keeping for existing admin pages)
   const isAdmin = false; // Can be enabled if needed
 
-  const primaryNavLinks = [
+  // Base navigation links (visible to all)
+  const baseNavLinks = [
     { label: 'Home', href: '/' },
     { label: 'Projects', href: '/projects' },
     { label: 'Products', href: '/products' },
-    { label: 'Dashboard', href: '/dashboard' },
-    { label: 'Analytics', href: '/analytics' },
-    { label: 'Wallet', href: '/wallet' }
+    { label: 'Dashboard', href: '/dashboard' }
   ];
+
+  // Activity Bar link (only for simple users)
+  const activityLink = isSimpleUser ? [{ label: 'Activity Bar', href: '/activities' }] : [];
+
+  // Wallet link (only for ENGO users)
+  const walletLink = isENGO ? [{ label: 'Wallet', href: '/wallet' }] : [];
+
+  // Combine navigation links (Analytics merged into ENGO Dashboard)
+  const primaryNavLinks = [...baseNavLinks, ...activityLink, ...walletLink];
 
   const adminMenuLinks = [
     { label: 'Admin Dashboard', href: '/admin', icon: '📊' },
@@ -167,7 +175,7 @@ const Header: React.FC = () => {
             <>
               {/* Login Button - Ghost Style */}
               <Link
-                href="/auth"
+                href={isENGO ? "/auth/engo/login" : "/auth"}
                 className="group relative flex items-center gap-2 overflow-hidden rounded-lg border-2 border-white/20 bg-transparent px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:border-white hover:bg-white/10"
               >
                 <svg className="h-4 w-4 transition-transform group-hover:scale-110" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" viewBox="0 0 24 24" stroke="currentColor">
@@ -178,7 +186,7 @@ const Header: React.FC = () => {
 
               {/* Get Started Button - Primary Style */}
               <Link
-                href="/auth"
+                href={isENGO ? "/auth/engo/signup" : "/auth"}
                 className="group relative flex items-center gap-2 overflow-hidden rounded-lg bg-white px-5 py-2.5 text-sm font-bold text-[#1a4d2e] shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105"
               >
                 <span className="absolute inset-0 bg-gradient-to-r from-green-50 to-emerald-50 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
@@ -426,14 +434,14 @@ const Header: React.FC = () => {
               ) : (
                 <div className="grid gap-3">
                   <Link
-                    href="/auth"
+                    href={isENGO ? "/auth/engo/login" : "/auth"}
                     className="flex items-center justify-center rounded-2xl border border-emerald-100 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition-all hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/50"
                     onClick={closeMobileMenu}
                   >
                     Login
                   </Link>
                   <Link
-                    href="/auth"
+                    href={isENGO ? "/auth/engo/signup" : "/auth"}
                     className="flex items-center justify-center rounded-2xl bg-gradient-to-r from-emerald-600 to-green-500 px-4 py-3 text-sm font-bold text-white shadow-lg transition-transform hover:scale-[1.01]"
                     onClick={closeMobileMenu}
                   >

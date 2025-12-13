@@ -1,11 +1,76 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
+interface ActivitySubmission {
+  id: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  type: string;
+  title: string;
+  description: string;
+  proofImage: string;
+  credits: number;
+  status: 'pending' | 'verified' | 'unverified';
+  submittedDate: string;
+}
+
 const AdminDashboardPage: React.FC = () => {
+  // Mock activity submissions for admin to verify
+  const [activities, setActivities] = useState<ActivitySubmission[]>([
+    {
+      id: '1',
+      userId: 'user123',
+      userName: 'John Doe',
+      userEmail: 'john@example.com',
+      type: 'plant-tree',
+      title: 'Planted 10 Trees in Community Park',
+      description: 'Planted 10 native trees in the community park and watered them regularly. Attached photos showing before and after.',
+      proofImage: '/api/placeholder/400/300',
+      credits: 50,
+      status: 'pending',
+      submittedDate: '2024-01-25'
+    },
+    {
+      id: '2',
+      userId: 'user456',
+      userName: 'Jane Smith',
+      userEmail: 'jane@example.com',
+      type: 'cleanup',
+      title: 'Beach Cleanup Activity',
+      description: 'Organized beach cleanup event with 20 volunteers. Collected 50kg of plastic waste and recyclables.',
+      proofImage: '/api/placeholder/400/300',
+      credits: 75,
+      status: 'pending',
+      submittedDate: '2024-01-24'
+    },
+    {
+      id: '3',
+      userId: 'user789',
+      userName: 'Mike Johnson',
+      userEmail: 'mike@example.com',
+      type: 'recycle',
+      title: 'Recycling Program Started',
+      description: 'Started neighborhood recycling program. Collected 100kg of recyclables this month.',
+      proofImage: '/api/placeholder/400/300',
+      credits: 30,
+      status: 'pending',
+      submittedDate: '2024-01-23'
+    }
+  ]);
+
+  const handleVerifyActivity = (activityId: string, verified: boolean) => {
+    setActivities(prev => prev.map(activity => 
+      activity.id === activityId 
+        ? { ...activity, status: verified ? 'verified' : 'unverified' }
+        : activity
+    ));
+  };
+
   // Mock admin data
   const stats = {
     totalUsers: 1247,
@@ -214,6 +279,142 @@ const AdminDashboardPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+
+              {/* Activity Verification Section */}
+              <div className="mt-8 rounded-2xl bg-white p-8 shadow-lg">
+                <div className="mb-6 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Activity Verification</h2>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Review and verify user-submitted eco-activities
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-700">
+                    {activities.filter(a => a.status === 'pending').length} Pending
+                  </span>
+                </div>
+
+                {activities.filter(a => a.status === 'pending').length === 0 ? (
+                  <div className="py-12 text-center">
+                    <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                      <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p className="mt-4 text-lg font-semibold text-gray-900">All activities verified</p>
+                    <p className="mt-2 text-gray-600">No pending activities to review</p>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {activities
+                      .filter(a => a.status === 'pending')
+                      .map((activity) => (
+                        <div
+                          key={activity.id}
+                          className="rounded-xl border-2 border-yellow-200 bg-yellow-50/50 p-6"
+                        >
+                          <div className="mb-4 flex flex-col gap-4 md:flex-row">
+                            {/* Proof Image */}
+                            <div className="md:w-48">
+                              <img
+                                src={activity.proofImage}
+                                alt={activity.title}
+                                className="h-48 w-full rounded-lg object-cover md:h-full"
+                              />
+                            </div>
+
+                            {/* Activity Details */}
+                            <div className="flex-1">
+                              <div className="mb-3">
+                                <div className="mb-2 flex items-center gap-2">
+                                  <span className="text-2xl">
+                                    {activity.type === 'plant-tree' ? '🌳' : 
+                                     activity.type === 'cleanup' ? '🧹' : 
+                                     activity.type === 'recycle' ? '♻️' : '🌱'}
+                                  </span>
+                                  <h3 className="text-lg font-bold text-gray-900">{activity.title}</h3>
+                                </div>
+                                <p className="text-sm text-gray-700">{activity.description}</p>
+                              </div>
+
+                              <div className="mb-4 space-y-2 text-sm">
+                                <div className="flex items-center gap-2">
+                                  <svg className="h-4 w-4 text-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                  </svg>
+                                  <span className="text-gray-600">{activity.userName} ({activity.userEmail})</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <svg className="h-4 w-4 text-emerald-600" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                  </svg>
+                                  <span className="font-semibold text-gray-900">{activity.credits} Credits</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <svg className="h-4 w-4 text-gray-400" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                  </svg>
+                                  <span className="text-gray-600">Submitted: {new Date(activity.submittedDate).toLocaleDateString()}</span>
+                                </div>
+                              </div>
+
+                              {/* Action Buttons */}
+                              <div className="flex gap-3">
+                                <button
+                                  onClick={() => handleVerifyActivity(activity.id, true)}
+                                  className="flex-1 rounded-xl bg-gradient-to-r from-green-600 to-green-700 px-4 py-2 text-sm font-semibold text-white transition-all hover:scale-105 hover:shadow-lg"
+                                >
+                                  ✓ Verify & Award Credits
+                                </button>
+                                <button
+                                  onClick={() => handleVerifyActivity(activity.id, false)}
+                                  className="flex-1 rounded-xl border-2 border-red-300 bg-white px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-50"
+                                >
+                                  ✗ Reject
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+
+                {/* Verified Activities Summary */}
+                {activities.filter(a => a.status !== 'pending').length > 0 && (
+                  <div className="mt-8 border-t border-gray-200 pt-6">
+                    <h3 className="mb-4 text-lg font-semibold text-gray-900">Recently Verified</h3>
+                    <div className="space-y-3">
+                      {activities
+                        .filter(a => a.status !== 'pending')
+                        .slice(0, 3)
+                        .map((activity) => (
+                          <div
+                            key={activity.id}
+                            className={`flex items-center justify-between rounded-lg border p-3 ${
+                              activity.status === 'verified' 
+                                ? 'border-green-200 bg-green-50' 
+                                : 'border-red-200 bg-red-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-3">
+                              <span className="text-xl">
+                                {activity.status === 'verified' ? '✓' : '✗'}
+                              </span>
+                              <div>
+                                <p className="text-sm font-semibold text-gray-900">{activity.title}</p>
+                                <p className="text-xs text-gray-600">{activity.userName}</p>
+                              </div>
+                            </div>
+                            <span className={`text-xs font-semibold ${
+                              activity.status === 'verified' ? 'text-green-700' : 'text-red-700'
+                            }`}>
+                              {activity.status === 'verified' ? 'Verified' : 'Rejected'}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
