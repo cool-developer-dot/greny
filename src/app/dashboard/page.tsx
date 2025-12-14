@@ -1,10 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import RoleSwitcher from '../../components/RoleSwitcher';
+import { ProtectedRoute } from '../../components/ProtectedRoute';
 import { useAuth } from '../../context/AuthContext';
 
 interface Investment {
@@ -24,7 +26,20 @@ interface MonthlyData {
 }
 
 const DashboardPage: React.FC = () => {
-  const { isSimpleUser } = useAuth();
+  const { isSimpleUser, isENGO } = useAuth();
+  
+  // Redirect ENGO users immediately - this page is ONLY for simple users
+  useEffect(() => {
+    if (isENGO) {
+      window.location.href = '/engo/dashboard';
+      return;
+    }
+  }, [isENGO]);
+  
+  // Don't render anything for ENGO users - they should never see this page
+  if (isENGO) {
+    return null;
+  }
   
   // Placeholder data
   const totalInvested = 5500;
@@ -105,8 +120,9 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      <Header />
+    <ProtectedRoute allowedRoles={['simple-user']}>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+        <Header />
 
       <main className="px-6 py-20 md:py-28">
         <div className="mx-auto max-w-7xl">
@@ -572,7 +588,8 @@ const DashboardPage: React.FC = () => {
 
       <Footer />
       <RoleSwitcher />
-    </div>
+      </div>
+    </ProtectedRoute>
   );
 };
 

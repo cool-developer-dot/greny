@@ -87,13 +87,64 @@ const categoryDistribution = [
   { category: 'Other', percentage: 5, amount: 125000, color: 'bg-purple-500', projects: 1 }
 ];
 
+// Pre-calculate donut chart paths to prevent hydration mismatch
+const donutChartPaths = categoryDistribution.reduce((acc, category, index) => {
+  const startAngle = acc.angle;
+  const angle = (category.percentage / 100) * 360;
+  const endAngle = startAngle + angle;
+  
+  // Round to 2 decimal places to prevent hydration mismatch
+  const x1 = Math.round((100 + 80 * Math.cos((startAngle - 90) * Math.PI / 180)) * 100) / 100;
+  const y1 = Math.round((100 + 80 * Math.sin((startAngle - 90) * Math.PI / 180)) * 100) / 100;
+  const x2 = Math.round((100 + 80 * Math.cos((endAngle - 90) * Math.PI / 180)) * 100) / 100;
+  const y2 = Math.round((100 + 80 * Math.sin((endAngle - 90) * Math.PI / 180)) * 100) / 100;
+  
+  const largeArc = angle > 180 ? 1 : 0;
+  
+  // Pre-calculate color to avoid string operations during render
+  const getColor = (colorStr: string) => {
+    const color = colorStr.replace('bg-', '').split('-')[0];
+    if (color === 'green') return '#10b981';
+    if (color === 'yellow') return '#eab308';
+    if (color === 'blue') return '#3b82f6';
+    if (color === 'cyan') return '#06b6d4';
+    return '#a855f7';
+  };
+  
+  return {
+    angle: endAngle,
+    paths: [
+      ...acc.paths,
+      {
+        key: index,
+        d: `M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z`,
+        fill: getColor(category.color)
+      }
+    ]
+  };
+}, { angle: 0, paths: [] as Array<{ key: number; d: string; fill: string }> }).paths;
+
+// Pre-calculate polyline points to prevent hydration mismatch
+const revenueLinePoints = revenueData.map((d, i) => {
+  const x = Math.round(((i / (revenueData.length - 1)) * 380 + 10) * 100) / 100;
+  const y = Math.round((200 - (d.revenue / Math.max(...revenueData.map(d => d.revenue))) * 180) * 100) / 100;
+  return `${x},${y}`;
+}).join(' ');
+
+const investorLinePoints = revenueData.map((d, i) => {
+  const x = Math.round(((i / (revenueData.length - 1)) * 380 + 10) * 100) / 100;
+  const y = Math.round((200 - (d.investors / Math.max(...revenueData.map(d => d.investors))) * 180) * 100) / 100;
+  return `${x},${y}`;
+}).join(' ');
+
+// Pre-calculate max values for charts
+const maxFunding = Math.max(...monthlyFundingData.map(d => d.funding));
+const maxRevenue = Math.max(...revenueData.map(d => d.revenue));
+const maxCredits = Math.max(...carbonCreditsData.map(d => d.credits));
+const maxInvestors = Math.max(...revenueData.map(d => d.investors));
+
 const ENGODashboardPage: React.FC = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState<'6M' | '12M' | 'All'>('12M');
-
-  const maxFunding = Math.max(...monthlyFundingData.map(d => d.funding));
-  const maxRevenue = Math.max(...revenueData.map(d => d.revenue));
-  const maxCredits = Math.max(...carbonCreditsData.map(d => d.credits));
-  const maxInvestors = Math.max(...revenueData.map(d => d.investors));
 
   return (
     <ProtectedRoute requiredRole="engo">
@@ -267,11 +318,7 @@ const ENGODashboardPage: React.FC = () => {
                       fill="none"
                       stroke="url(#revenueGradient)"
                       strokeWidth="3"
-                      points={revenueData.map((d, i) => {
-                        const x = Math.round(((i / (revenueData.length - 1)) * 380 + 10) * 100) / 100;
-                        const y = Math.round((200 - (d.revenue / maxRevenue) * 180) * 100) / 100;
-                        return `${x},${y}`;
-                      }).join(' ')}
+                      points={revenueLinePoints}
                     />
                     {/* Investor line */}
                     <polyline
@@ -279,11 +326,7 @@ const ENGODashboardPage: React.FC = () => {
                       stroke="url(#investorGradient)"
                       strokeWidth="3"
                       strokeDasharray="5,5"
-                      points={revenueData.map((d, i) => {
-                        const x = Math.round(((i / (revenueData.length - 1)) * 380 + 10) * 100) / 100;
-                        const y = Math.round((200 - (d.investors / maxInvestors) * 180) * 100) / 100;
-                        return `${x},${y}`;
-                      }).join(' ')}
+                      points={investorLinePoints}
                     />
                     <defs>
                       <linearGradient id="revenueGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -392,42 +435,14 @@ const ENGODashboardPage: React.FC = () => {
                         stroke="#e5e7eb"
                         strokeWidth="40"
                       />
-                      {categoryDistribution.reduce((acc, category, index) => {
-                        const startAngle = acc.angle;
-                        const angle = (category.percentage / 100) * 360;
-                        const endAngle = startAngle + angle;
-                        
-                        // Round to 2 decimal places to prevent hydration mismatch
-                        const x1 = Math.round((100 + 80 * Math.cos((startAngle - 90) * Math.PI / 180)) * 100) / 100;
-                        const y1 = Math.round((100 + 80 * Math.sin((startAngle - 90) * Math.PI / 180)) * 100) / 100;
-                        const x2 = Math.round((100 + 80 * Math.cos((endAngle - 90) * Math.PI / 180)) * 100) / 100;
-                        const y2 = Math.round((100 + 80 * Math.sin((endAngle - 90) * Math.PI / 180)) * 100) / 100;
-                        
-                        const largeArc = angle > 180 ? 1 : 0;
-                        
-                        // Pre-calculate color to avoid string operations during render
-                        const getColor = (colorStr: string) => {
-                          const color = colorStr.replace('bg-', '').split('-')[0];
-                          if (color === 'green') return '#10b981';
-                          if (color === 'yellow') return '#eab308';
-                          if (color === 'blue') return '#3b82f6';
-                          if (color === 'cyan') return '#06b6d4';
-                          return '#a855f7';
-                        };
-                        
-                        return {
-                          angle: endAngle,
-                          paths: [
-                            ...acc.paths,
-                            <path
-                              key={index}
-                              d={`M 100 100 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z`}
-                              fill={getColor(category.color)}
-                              className="transition-all hover:opacity-80"
-                            />
-                          ]
-                        };
-                      }, { angle: 0, paths: [] as JSX.Element[] }).paths}
+                      {donutChartPaths.map((path) => (
+                        <path
+                          key={path.key}
+                          d={path.d}
+                          fill={path.fill}
+                          className="transition-all hover:opacity-80"
+                        />
+                      ))}
                     </svg>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
