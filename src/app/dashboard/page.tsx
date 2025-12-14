@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -24,7 +25,21 @@ interface MonthlyData {
 }
 
 const DashboardPage: React.FC = () => {
-  const { isSimpleUser } = useAuth();
+  const router = useRouter();
+  const { isSimpleUser, isENGO } = useAuth();
+  
+  // BLOCK ENGO users from accessing Investment Dashboard - redirect immediately
+  useEffect(() => {
+    if (isENGO) {
+      // Force immediate redirect - ENGO users should NEVER see Investment Dashboard
+      window.location.replace('/engo/dashboard');
+    }
+  }, [isENGO]);
+  
+  // Don't render ANYTHING for ENGO users - this page is NOT for them
+  if (isENGO) {
+    return null; // Return nothing - page should not render at all
+  }
   
   // Placeholder data
   const totalInvested = 5500;
