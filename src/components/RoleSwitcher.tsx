@@ -12,7 +12,7 @@ import { useAuth } from '../context/AuthContext';
  * Usage: Import and add <RoleSwitcher /> to any page component
  */
 const RoleSwitcher: React.FC = () => {
-  const { user, switchRole, isENGO, isSimpleUser } = useAuth();
+  const { user, switchRole, isENGO, isSimpleUser, isCorporate } = useAuth();
 
   return (
     <div className="fixed bottom-4 right-4 z-50 rounded-2xl bg-white p-4 shadow-2xl border-2 border-green-500">
@@ -42,6 +42,16 @@ const RoleSwitcher: React.FC = () => {
         >
           Switch to ENGO
         </button>
+        <button
+          onClick={() => switchRole('corporate')}
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            isCorporate
+              ? 'bg-green-600 text-white shadow-lg'
+              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Switch to Corporate
+        </button>
       </div>
 
       {isENGO && (
@@ -53,6 +63,20 @@ const RoleSwitcher: React.FC = () => {
             <a href="/engo/person-details" className="text-blue-600 hover:underline">Person Details</a>
             <a href="/engo/project-details/1" className="text-blue-600 hover:underline">Project Details</a>
             <a href="/engo/launch" className="text-blue-600 hover:underline">Launch Project</a>
+          </div>
+        </div>
+      )}
+
+      {isCorporate && (
+        <div className="mt-3 pt-3 border-t border-gray-200">
+          <p className="text-xs font-semibold text-gray-700 mb-2">Corporate Pages:</p>
+          <div className="flex flex-col gap-1 text-xs">
+            <a href="/corporate/dashboard" className="text-blue-600 hover:underline">Dashboard</a>
+            <a href="/corporate/emissions" className="text-blue-600 hover:underline">Emissions</a>
+            <a href="/corporate/volunteers" className="text-blue-600 hover:underline">Volunteers</a>
+            <a href="/corporate/campaigns" className="text-blue-600 hover:underline">Campaigns</a>
+            <a href="/corporate/reports" className="text-blue-600 hover:underline">Reports</a>
+            <a href="/corporate/employees" className="text-blue-600 hover:underline">Employees</a>
           </div>
         </div>
       )}
