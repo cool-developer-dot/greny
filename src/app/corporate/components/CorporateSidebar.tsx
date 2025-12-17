@@ -1,26 +1,41 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
+type EmployeeRole = 'Corporate Admin' | 'Sustainability Manager' | 'HR Manager' | 'Finance Manager' | 'Employee';
 
 interface NavLink {
   label: string;
   href: string;
   icon: string;
+  allowedRoles: EmployeeRole[]; // Roles that can see this link
 }
 
-const navLinks: NavLink[] = [
-  { label: 'Dashboard', href: '/corporate/dashboard', icon: '📊' },
-  { label: 'CO₂ Emissions', href: '/corporate/emissions', icon: '🌍' },
-  { label: 'Volunteers', href: '/corporate/volunteers', icon: '👥' },
-  { label: 'Campaigns', href: '/corporate/campaigns', icon: '📢' },
-  { label: 'ESG Reports', href: '/corporate/reports', icon: '📈' },
-  { label: 'Employees', href: '/corporate/employees', icon: '👤' },
+const allNavLinks: NavLink[] = [
+  { label: 'Dashboard', href: '/corporate/dashboard', icon: '📊', allowedRoles: ['Corporate Admin', 'Sustainability Manager', 'HR Manager', 'Finance Manager', 'Employee'] },
+  { label: 'CO₂ Emissions', href: '/corporate/emissions', icon: '🌍', allowedRoles: ['Corporate Admin', 'Sustainability Manager', 'Employee'] },
+  { label: 'Volunteers', href: '/corporate/volunteers', icon: '👥', allowedRoles: ['Corporate Admin', 'HR Manager', 'Sustainability Manager', 'Employee'] },
+  { label: 'Campaigns', href: '/corporate/campaigns', icon: '📢', allowedRoles: ['Corporate Admin', 'Sustainability Manager', 'Employee'] },
+  { label: 'ESG Reports', href: '/corporate/reports', icon: '📈', allowedRoles: ['Corporate Admin', 'Sustainability Manager', 'Finance Manager'] },
+  { label: 'Employees', href: '/corporate/employees', icon: '👤', allowedRoles: ['Corporate Admin', 'HR Manager'] },
 ];
 
 export default function CorporateSidebar() {
   const pathname = usePathname();
+  const [employeeRole, setEmployeeRole] = useState<EmployeeRole>('Corporate Admin');
+
+  useEffect(() => {
+    // Get employee role from localStorage or default to Corporate Admin
+    const storedRole = localStorage.getItem('employeeRole') as EmployeeRole;
+    if (storedRole && ['Corporate Admin', 'Sustainability Manager', 'HR Manager', 'Finance Manager', 'Employee'].includes(storedRole)) {
+      setEmployeeRole(storedRole);
+    }
+  }, []);
+
+  // Filter nav links based on employee role
+  const navLinks = allNavLinks.filter(link => link.allowedRoles.includes(employeeRole));
 
   return (
     <aside className="w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col">
