@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 interface Campaign {
   id: string;
@@ -291,9 +292,12 @@ export default function CampaignsPage() {
 
               {/* Card Footer */}
               <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                <button className="w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-lg transition-all hover:scale-105">
+                <Link
+                  href={`/corporate/campaigns/${campaign.id}`}
+                  className="block w-full px-4 py-2.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold hover:shadow-lg transition-all hover:scale-105 text-center"
+                >
                   View Details
-                </button>
+                </Link>
               </div>
             </div>
           );
