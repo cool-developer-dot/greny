@@ -7,15 +7,16 @@ import { useAuth } from '../../context/AuthContext';
 
 const Header: React.FC = () => {
   const router = useRouter();
-  const { isAuthenticated, isENGO, isSimpleUser, isCorporate, user } = useAuth();
+  const { isAuthenticated, isENGO, isSimpleUser, isCorporate, isCarbon, user } = useAuth();
   
   // Debug: Log role status (remove after testing)
   useEffect(() => {
-    console.log('Header - Role:', user?.role, 'isENGO:', isENGO, 'isCorporate:', isCorporate);
-  }, [isENGO, isCorporate, user?.role]);
+    console.log('Header - Role:', user?.role, 'isENGO:', isENGO, 'isCorporate:', isCorporate, 'isCarbon:', isCarbon);
+  }, [isENGO, isCorporate, isCarbon, user?.role]);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [showENGOMenu, setShowENGOMenu] = useState(false);
   const [showCorporateMenu, setShowCorporateMenu] = useState(false);
+  const [showCarbonMenu, setShowCarbonMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -24,6 +25,7 @@ const Header: React.FC = () => {
 
   // Determine dashboard href based on role
   const getDashboardHref = () => {
+    if (isCarbon) return '/carbon/marketplace';
     if (isCorporate) return '/corporate/dashboard';
     if (isENGO) return '/engo/dashboard';
     return '/dashboard';
@@ -69,12 +71,17 @@ const Header: React.FC = () => {
     { label: 'Employees', href: '/corporate/employees', icon: '👤' }
   ];
 
+  const carbonMenuLinks = [
+    { label: 'Carbon Marketplace', href: '/carbon/marketplace', icon: '🌳' }
+  ];
+
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
     setShowAdminMenu(false);
     setShowENGOMenu(false);
     setShowCorporateMenu(false);
+    setShowCarbonMenu(false);
     setShowUserMenu(false);
   };
 
@@ -174,6 +181,7 @@ const Header: React.FC = () => {
                   onClick={() => {
                     setShowCorporateMenu(!showCorporateMenu);
                     setShowENGOMenu(false);
+                    setShowCarbonMenu(false);
                   }}
                   className="relative flex items-center gap-1 text-base font-medium text-white transition-colors hover:text-green-200 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-green-300 after:transition-all after:duration-300 hover:after:w-full"
                 >
@@ -191,6 +199,41 @@ const Header: React.FC = () => {
                         href={item.href}
                         className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-green-50"
                         onClick={() => setShowCorporateMenu(false)}
+                      >
+                        <span className="text-xl">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </li>
+            )}
+
+            {/* Carbon Dropdown - Only visible for Carbon users */}
+            {isCarbon && (
+              <li className="relative">
+                <button
+                  onClick={() => {
+                    setShowCarbonMenu(!showCarbonMenu);
+                    setShowENGOMenu(false);
+                    setShowCorporateMenu(false);
+                  }}
+                  className="relative flex items-center gap-1 text-base font-medium text-white transition-colors hover:text-green-200 after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-green-300 after:transition-all after:duration-300 hover:after:w-full"
+                >
+                  Carbon
+                  <svg className={`h-4 w-4 transition-transform ${showCarbonMenu ? 'rotate-180' : ''}`} fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </button>
+                
+                {showCarbonMenu && (
+                  <div className="absolute top-full right-0 mt-2 w-56 rounded-lg bg-white shadow-xl py-2 z-50">
+                    {carbonMenuLinks.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-green-50"
+                        onClick={() => setShowCarbonMenu(false)}
                       >
                         <span className="text-xl">{item.icon}</span>
                         {item.label}
@@ -439,6 +482,43 @@ const Header: React.FC = () => {
                     >
                       <span className="flex items-center gap-3">
                         <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-100 to-indigo-50 text-lg">
+                          {item.icon}
+                        </span>
+                        {item.label}
+                      </span>
+                      <svg
+                        className="h-4 w-4 text-emerald-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9 5l7 7-7 7" />
+                      </svg>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Carbon Menu - Only visible for Carbon users */}
+            {isCarbon && (
+              <div className="space-y-4 border-t border-gray-100 pt-5">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gray-400">
+                  Carbon
+                </p>
+                <div className="grid gap-3">
+                  {carbonMenuLinks.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center justify-between rounded-2xl border border-gray-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-emerald-200 hover:bg-emerald-50/40"
+                      onClick={closeMobileMenu}
+                    >
+                      <span className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-100 to-emerald-50 text-lg">
                           {item.icon}
                         </span>
                         {item.label}

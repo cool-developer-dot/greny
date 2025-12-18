@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-type UserRole = 'simple-user' | 'engo' | 'corporate';
+type UserRole = 'simple-user' | 'engo' | 'corporate' | 'carbon';
 
 interface User {
   id: string;
@@ -18,6 +18,7 @@ interface AuthContextType {
   isENGO: boolean;
   isSimpleUser: boolean;
   isCorporate: boolean;
+  isCarbon: boolean;
   switchRole: (role: UserRole) => void;
 }
 
@@ -41,6 +42,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const isENGO = user?.role === 'engo';
   const isSimpleUser = user?.role === 'simple-user';
   const isCorporate = user?.role === 'corporate';
+  const isCarbon = user?.role === 'carbon';
 
   const switchRole = (role: UserRole) => {
     if (user) {
@@ -58,6 +60,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     isENGO,
     isSimpleUser,
     isCorporate,
+    isCarbon,
     switchRole
   };
 
